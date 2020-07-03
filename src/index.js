@@ -1,46 +1,35 @@
-import  {createStore} from "redux";
+import {createStore,bindActionCreators} from "redux";
+import reducer from "./reducer";
+import {increment, decrement, randomize} from './actions.js'
+
 const dec = document.getElementById('dec'),
-    inc=document.getElementById('inc'),
+    inc = document.getElementById('inc'),
     counter = document.getElementById('counter'),
-    rnd =document.getElementById('rnd');
-
-const reducer = (state = 0, action) => {
-    switch (action.type) {
-        case 'INC':
-            return state + 1;
-        case 'DEC':
-            return state -1;
-        case 'RND':
-            return state+action.value;
-
-        default:
-            return state;
-    }
-};
-const increment = ()=>({type:'INC'});
-const decrement =()=>({type:'DEC'});
-const randomize =(value) =>({type:'RND',value});
-
+    rnd = document.getElementById('rnd');
 
 
 const store = createStore(reducer);
+const {dispatch} = store;
+// const bindActionCreator =(creator,dispatch)=>(...args)=>{
+//   dispatch(creator(...args));
+// };
+
+const incDispatch =bindActionCreators(increment,dispatch);
+const decDispatch  =bindActionCreators(decrement,dispatch);
+const rndDispatch = bindActionCreators(randomize,dispatch);
 
 // Подписка
-store.subscribe(()=>{
-    counter.innerHTML=store.getState();
-   console.log(store.getState());
+store.subscribe(() => {
+    counter.innerHTML = store.getState();
+    console.log(store.getState());
 });
-inc.addEventListener('click',()=>{
-    store.dispatch(increment());
-});
+inc.addEventListener('click', incDispatch);
 
-dec.addEventListener('click',()=>{
-    store.dispatch(decrement());
-});
+dec.addEventListener('click', decDispatch);
 
-rnd.addEventListener('click',()=>{
-    const value=Math.floor(Math.random()*10);
-store.dispatch(randomize(value));
+rnd.addEventListener('click', () => {
+    const value = Math.floor(Math.random() * 10);
+    rndDispatch(value);
 });
 
 
